@@ -1,0 +1,17 @@
+# Python-specific ignore rules
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Configuration
+.env
+
+# IDEs and editors
+.vscode/
+.idea/
