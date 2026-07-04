@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import User
-from app.schemas import UserCreate
+from app.schemas import UserCreate, UserUpdate
 
 
 # Initialize the FastAPI application with metadata
@@ -186,6 +186,30 @@ async def get_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
 
     return users
+
+@app.put("/users/{user_id}")
+async def update_user(
+    user_id: int,
+    updated_user: UserUpdate,
+    db: Session = Depends(get_db)
+):
+
+    user = db.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        return {"message": "User not found"}
+
+    user.weight = updated_user.weight
+    user.goal = updated_user.goal
+    user.activity_level = updated_user.activity_level
+
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "message": "User updated successfully",
+        "user": user
+    }
     """
     Root endpoint that returns a welcome message.
     

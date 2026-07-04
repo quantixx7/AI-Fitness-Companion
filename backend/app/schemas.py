@@ -11,3 +11,8 @@ class UserCreate(BaseModel):
     activity_level: str
     experience: str
     equipment: str
+    
+class UserUpdate(BaseModel):
+    weight: float
+    goal: str
+    activity_level: str
