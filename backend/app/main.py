@@ -5,6 +5,12 @@ from groq import Groq
 from dotenv import load_dotenv
 import os
 import app.database 
+from fastapi import Depends
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.models import User
+from app.schemas import UserCreate
 
 
 # Initialize the FastAPI application with metadata
@@ -149,6 +155,37 @@ Rules:
     return {
         "reply": response.choices[0].message.content
     }
+
+@app.post("/users")
+async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+
+    new_user = User(
+        name=user.name,
+        age=user.age,
+        gender=user.gender,
+        height=user.height,
+        weight=user.weight,
+        goal=user.goal,
+        activity_level=user.activity_level,
+        experience=user.experience,
+        equipment=user.equipment
+    )
+
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {
+        "message": "User created successfully",
+        "user_id": new_user.id
+    }
+
+@app.get("/users")
+async def get_users(db: Session = Depends(get_db)):
+
+    users = db.query(User).all()
+
+    return users
     """
     Root endpoint that returns a welcome message.
     
