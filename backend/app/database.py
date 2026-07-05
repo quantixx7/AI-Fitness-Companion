@@ -1,22 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-import os
+from app.config import settings
 
-# Load environment variables
-load_dotenv()
-
-# Database URL
-DATABASE_URL = (
-    f"postgresql://{os.getenv('DB_USER')}:"
-    f"{os.getenv('DB_PASSWORD')}@"
-    f"{os.getenv('DB_HOST')}:"
-    f"{os.getenv('DB_PORT')}/"
-    f"{os.getenv('DB_NAME')}"
-)
-
-# Create database engine
-engine = create_engine(DATABASE_URL)
+# Create database engine using centralized configuration URL
+engine = create_engine(settings.database_url)
 
 # Create session factory
 SessionLocal = sessionmaker(
@@ -25,13 +12,8 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
+# Import models to ensure they are registered on the Base metadata
 from app.models import Base
 
+# Create tables in database if they do not exist
 Base.metadata.create_all(bind=engine)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
