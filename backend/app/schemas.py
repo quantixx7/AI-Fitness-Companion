@@ -35,3 +35,7 @@ class UserProfile(BaseModel):
 class ChatWithProfileRequest(BaseModel):
     profile: UserProfile
     message: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
