@@ -10,6 +10,8 @@ class UserCreate(BaseModel):
     activity_level: str
     experience: str
     equipment: str
+    email: str
+    password: str
     
 class UserUpdate(BaseModel):
     weight: float
