@@ -86,3 +86,53 @@ Rules:
     )
 
     return response.choices[0].message.content
+
+def generate_workout(user, message: str) -> str:
+
+    context = build_user_context(user)
+
+    system_prompt = f"""
+You are an expert fitness coach.
+
+{context}
+
+Generate a workout using this exact format:
+
+Workout Name:
+
+Goal:
+
+Duration:
+
+Warm-up:
+
+Exercises:
+1.
+2.
+3.
+4.
+5.
+
+Cooldown:
+
+Tips:
+
+Only return the workout.
+Do not add introductions or unnecessary explanations.
+"""
+
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": message
+            }
+        ]
+    )
+
+    return response.choices[0].message.content

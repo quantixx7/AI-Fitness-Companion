@@ -1,3 +1,4 @@
+from app.services.ai_service import generate_workout
 from fastapi import Depends
 from app.dependencies import get_current_user
 from app.models import User
@@ -38,6 +39,21 @@ async def ai_chat(
 ):
 
     reply = generate_fitness_chat_response(
+        current_user,
+        request.message
+    )
+
+    return {
+        "reply": reply
+    }
+
+@router.post("/workout")
+async def workout(
+    request: AIRequest,
+    current_user: User = Depends(get_current_user)
+):
+
+    reply = generate_workout(
         current_user,
         request.message
     )
