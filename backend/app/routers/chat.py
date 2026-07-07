@@ -1,3 +1,4 @@
+from app.services.ai_service import generate_diet
 from app.services.ai_service import generate_workout
 from fastapi import Depends
 from app.dependencies import get_current_user
@@ -57,6 +58,17 @@ async def workout(
         current_user,
         request.message
     )
+
+    return {
+        "reply": reply
+    }
+
+@router.post("/diet")
+async def diet(
+    request: AIRequest,
+    current_user: User = Depends(get_current_user)
+):
+    reply = generate_diet(current_user, request.message)
 
     return {
         "reply": reply
