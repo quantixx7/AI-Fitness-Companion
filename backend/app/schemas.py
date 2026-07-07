@@ -39,3 +39,6 @@ class ChatWithProfileRequest(BaseModel):
 class UserLogin(BaseModel):
     email: str
     password: str
+
+class AIRequest(BaseModel):
+    message: str

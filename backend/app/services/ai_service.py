@@ -53,13 +53,12 @@ Rules:
     )
     return response.choices[0].message.content
 
-def generate_fitness_chat_response(profile: UserProfile, message: str) -> str:
+def generate_fitness_chat_response(user, message: str):
     """
     Generate personalized fitness chat response using user profile data.
     """
 
-    context = build_user_context(profile)
-
+    context = build_user_context(user)
     system_prompt = f"""
 You are AI Fitness Companion.
 
