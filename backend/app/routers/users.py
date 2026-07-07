@@ -1,3 +1,4 @@
+from app.dependencies import get_current_user
 from app.schemas import UserLogin
 from app.services.jwt_service import create_access_token
 from app.services.auth_service import verify_password
@@ -123,3 +124,8 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
         "token_type": "bearer"
     }
     
+@router.get("/me")
+async def get_me(
+    current_user: User = Depends(get_current_user)
+):
+    return current_user

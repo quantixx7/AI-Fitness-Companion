@@ -7,6 +7,22 @@ client = Groq(
     api_key=settings.GROQ_API_KEY
 )
 
+def build_user_context(profile: UserProfile) -> str:
+
+    return f"""
+User Profile
+
+Name: {profile.name}
+Age: {profile.age}
+Gender: {profile.gender}
+Height: {profile.height} cm
+Weight: {profile.weight} kg
+Goal: {profile.goal}
+Activity Level: {profile.activity_level}
+Experience: {profile.experience}
+Equipment: {profile.equipment}
+"""
+
 def generate_chat_response(message: str) -> str:
     """
     Generate general fitness chat response using Groq with Llama 3 model.
@@ -41,19 +57,13 @@ def generate_fitness_chat_response(profile: UserProfile, message: str) -> str:
     """
     Generate personalized fitness chat response using user profile data.
     """
+
+    context = build_user_context(profile)
+
     system_prompt = f"""
 You are AI Fitness Companion.
 
-User Profile:
-Name: {profile.name}
-Age: {profile.age}
-Gender: {profile.gender}
-Height: {profile.height} cm
-Weight: {profile.weight} kg
-Goal: {profile.goal}
-Activity Level: {profile.activity_level}
-Experience: {profile.experience}
-Equipment: {profile.equipment}
+{context}
 
 Rules:
 - Give scientifically accurate fitness advice.
@@ -75,4 +85,5 @@ Rules:
             }
         ]
     )
+
     return response.choices[0].message.content
