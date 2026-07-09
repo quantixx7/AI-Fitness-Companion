@@ -41,4 +41,27 @@ class UserLogin(BaseModel):
     password: str
 
 class AIRequest(BaseModel):
+    session_id: int
     message: str
+
+
+class ChatSessionResponse(BaseModel):
+    session_id: int
+    title: str
+
+
+
+class ChatSessionResponse(BaseModel):
+    id: int
+    title: str
+
+    class Config:
+        from_attributes = True
+
+
+class ChatMessageResponse(BaseModel):
+    role: str
+    message: str
+
+    class Config:
+        from_attributes = True

@@ -23,16 +23,28 @@ Experience: {profile.experience}
 Equipment: {profile.equipment}
 """
 
-def generate_chat_response(message: str) -> str:
-    """
-    Generate general fitness chat response using Groq with Llama 3 model.
-    """
+def ask_llama(system_prompt: str, user_message: str) -> str:
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
             {
                 "role": "system",
-                "content": """
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": user_message
+            }
+        ]
+    )
+
+    return response.choices[0].message.content
+
+def generate_chat_response(message: str) -> str:
+    """
+    Generate general fitness chat response using Groq with Llama 3 model.
+    """
+    system_prompt = """
 You are AI Fitness Companion.
 
 Rules:
@@ -44,48 +56,41 @@ Rules:
 - Keep answers clear and well structured.
 - If information is missing, ask follow-up questions before giving a plan.
 """
-            },
-            {
-                "role": "user",
-                "content": message
-            }
-        ]
-    )
-    return response.choices[0].message.content
-
-def generate_fitness_chat_response(user, message: str):
+    return ask_llama(system_prompt, message)
+def generate_fitness_chat_response(user, message: str, history=None):
     """
     Generate personalized fitness chat response using user profile data.
     """
 
     context = build_user_context(user)
+
+    history_text = ""
+
+    if history:
+        history_text = "\n".join(
+            [
+                f"{msg.role}: {msg.message}"
+                for msg in reversed(history)
+            ]
+        )
+
     system_prompt = f"""
 You are AI Fitness Companion.
 
 {context}
 
+Previous Conversation:
+{history_text}
+
 Rules:
 - Give scientifically accurate fitness advice.
 - Personalize every response.
 - Never ignore the user's profile.
+- Use the previous conversation when answering.
 - If information is missing, ask follow-up questions.
 """
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": system_prompt
-            },
-            {
-                "role": "user",
-                "content": message
-            }
-        ]
-    )
-
-    return response.choices[0].message.content
+    return ask_llama(system_prompt, message)
 
 def generate_workout(user, message: str) -> str:
 
@@ -120,22 +125,7 @@ Tips:
 Only return the workout.
 Do not add introductions or unnecessary explanations.
 """
-
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": system_prompt
-            },
-            {
-                "role": "user",
-                "content": message
-            }
-        ]
-    )
-
-    return response.choices[0].message.content
+    return ask_llama(system_prompt, message)
 
 def generate_diet(user, message: str) -> str:
 
@@ -173,18 +163,4 @@ Notes:
 Only return the diet plan.
 """
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "system",
-                "content": system_prompt
-            },
-            {
-                "role": "user",
-                "content": message
-            }
-        ]
-    )
-
-    return response.choices[0].message.content
+    return ask_llama(system_prompt, message)

@@ -1,3 +1,4 @@
+from fastapi.security import OAuth2PasswordRequestForm
 from app.dependencies import get_current_user
 from app.schemas import UserLogin
 from app.services.jwt_service import create_access_token
@@ -96,9 +97,14 @@ async def delete_user(
     }
 
 @router.post("/login")
-async def login(user: UserLogin, db: Session = Depends(get_db)):
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
 
-    db_user = db.query(User).filter(User.email == user.email).first()
+    db_user = db.query(User).filter(
+        User.email == form_data.username
+    ).first()
 
     if not db_user:
         raise HTTPException(
@@ -106,7 +112,10 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
             detail="Invalid email or password"
         )
 
-    if not verify_password(user.password, db_user.password_hash):
+    if not verify_password(
+        form_data.password,
+        db_user.password_hash
+    ):
         raise HTTPException(
             status_code=401,
             detail="Invalid email or password"
@@ -123,9 +132,3 @@ async def login(user: UserLogin, db: Session = Depends(get_db)):
         "access_token": access_token,
         "token_type": "bearer"
     }
-    
-@router.get("/me")
-async def get_me(
-    current_user: User = Depends(get_current_user)
-):
-    return current_user
