@@ -1,14 +1,17 @@
 from groq import Groq
+
 from app.config import settings
+from app.models import ChatMessage, User
 from app.schemas import UserProfile
 
 # Initialize the Groq client
-client = Groq(
-    api_key=settings.GROQ_API_KEY
-)
+client = Groq(api_key=settings.GROQ_API_KEY)
 
-def build_user_context(profile: UserProfile) -> str:
 
+def build_user_context(profile: UserProfile | User) -> str:
+    """
+    Constructs a formatted context string containing the user's fitness profile.
+    """
     return f"""
 User Profile
 
@@ -23,7 +26,11 @@ Experience: {profile.experience}
 Equipment: {profile.equipment}
 """
 
+
 def ask_llama(system_prompt: str, user_message: str) -> str:
+    """
+    Sends a system prompt and user message to the Groq LLM API.
+    """
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
@@ -37,8 +44,8 @@ def ask_llama(system_prompt: str, user_message: str) -> str:
             }
         ]
     )
-
     return response.choices[0].message.content
+
 
 def generate_chat_response(message: str) -> str:
     """
@@ -57,13 +64,17 @@ Rules:
 - If information is missing, ask follow-up questions before giving a plan.
 """
     return ask_llama(system_prompt, message)
-def generate_fitness_chat_response(user, message: str, history=None):
-    """
-    Generate personalized fitness chat response using user profile data.
-    """
 
+
+def generate_fitness_chat_response(
+    user: UserProfile | User,
+    message: str,
+    history: list[ChatMessage] | None = None
+) -> str:
+    """
+    Generate personalized fitness chat response using user profile data and chat history.
+    """
     context = build_user_context(user)
-
     history_text = ""
 
     if history:
@@ -89,11 +100,13 @@ Rules:
 - Use the previous conversation when answering.
 - If information is missing, ask follow-up questions.
 """
-
     return ask_llama(system_prompt, message)
 
-def generate_workout(user, message: str) -> str:
 
+def generate_workout(user: UserProfile | User, message: str) -> str:
+    """
+    Generates a personalized workout plan for the user in a strict output format.
+    """
     context = build_user_context(user)
 
     system_prompt = f"""
@@ -127,8 +140,11 @@ Do not add introductions or unnecessary explanations.
 """
     return ask_llama(system_prompt, message)
 
-def generate_diet(user, message: str) -> str:
 
+def generate_diet(user: UserProfile | User, message: str) -> str:
+    """
+    Generates a personalized diet plan for the user in a strict output format.
+    """
     context = build_user_context(user)
 
     system_prompt = f"""
@@ -162,5 +178,4 @@ Notes:
 
 Only return the diet plan.
 """
-
     return ask_llama(system_prompt, message)

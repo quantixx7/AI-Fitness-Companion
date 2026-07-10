@@ -2,6 +2,12 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
+@router.get("/health")
+async def health():
+    return {
+        "status": "healthy"
+    }
+
 @router.get("/", tags=["Root"])
 async def read_root() -> dict[str, str]:
     """

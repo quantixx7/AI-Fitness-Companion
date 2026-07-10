@@ -45,10 +45,9 @@ class AIRequest(BaseModel):
     message: str
 
 
-class ChatSessionResponse(BaseModel):
+class ChatSessionCreateResponse(BaseModel):
     session_id: int
     title: str
-
 
 
 class ChatSessionResponse(BaseModel):
@@ -65,3 +64,6 @@ class ChatMessageResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class RenameChatRequest(BaseModel):
+    title: str
