@@ -67,3 +67,19 @@ class ChatMessageResponse(BaseModel):
 
 class RenameChatRequest(BaseModel):
     title: str
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    age: int
+    gender: str
+    height: float
+    weight: float
+    goal: str
+    activity_level: str
+    experience: str
+    equipment: str
+
+    class Config:
+        from_attributes = True

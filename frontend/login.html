@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - AI Fitness Companion</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Redirect immediately if already authenticated
+        window.redirectIfAuthenticated();
+    </script>
+</head>
+<body class="auth-page">
+    <div class="glass-card auth-card">
+        <div class="auth-header">
+            <a href="index.html" class="logo">FIT COMPANION</a>
+            <h1>Welcome Back</h1>
+            <p>Enter your credentials to access your trainer dashboard</p>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    placeholder="name@example.com" 
+                    required 
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="password-input-wrapper">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="••••••••" 
+                        required 
+                        autocomplete="current-password"
+                    >
+                    <button 
+                        type="button" 
+                        class="password-toggle-btn" 
+                        id="password-toggle"
+                        aria-label="Toggle password visibility"
+                    >Show</button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;" id="submit-btn">
+                <span>Sign In</span>
+            </button>
+        </form>
+
+        <div class="auth-switch">
+            Don't have an account? <a href="register.html">Create an Account</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('login-form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.getElementById('password-toggle');
+            const submitBtn = document.getElementById('submit-btn');
+            const alertContainer = document.getElementById('alert-container');
+
+            // Parse URL parameters for status messages (e.g. session expired)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('expired') === 'true') {
+                showAlert('Your session has expired. Please sign in again.', 'danger');
+            } else if (urlParams.get('registered') === 'true') {
+                showAlert('Registration successful! Please sign in.', 'success');
+            }
+
+            // Toggle password visibility
+            toggleBtn.addEventListener('click', () => {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleBtn.textContent = 'Hide';
+                } else {
+                    passwordInput.type = 'password';
+                    toggleBtn.textContent = 'Show';
+                }
+            });
+
+            // Display alert message
+            function showAlert(message, type = 'danger') {
+                alertContainer.innerHTML = `
+                    <div class="alert alert-${type}">
+                        <span>${type === 'danger' ? '⚠️' : '✅'}</span>
+                        <div>${message}</div>
+                    </div>
+                `;
+            }
+
+            // Handle login submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                alertContainer.innerHTML = '';
+                
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+
+                if (!email || !password) {
+                    showAlert('Please enter both email and password.');
+                    return;
+                }
+
+                // Show loading state
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span class="loading-spinner"></span> <span>Signing In...</span>`;
+
+                try {
+                    await window.loginUser(email, password);
+                    // On success, redirect to dashboard
+                    window.location.href = 'dashboard.html';
+                } catch (error) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnText;
+                    showAlert(error.message || 'Failed to authenticate. Check your credentials.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fitness Companion - Your AI Personal Coach</title>
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        /* Special styles for index landing page */
+        .landing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 8%;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+            padding: 80px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 24px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            padding: 40px 8%;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition-smooth);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-hover);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: rgba(6, 182, 212, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card:nth-child(even) .feature-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-ctas {
+                flex-direction: column;
+                width: 100%;
+                max-width: 320px;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Intercept authenticated users immediately before rendering
+        window.redirectIfAuthenticated();
+    </script>
+</head>
+<body>
+    <header class="landing-header">
+        <a href="index.html" class="logo">FIT COMPANION</a>
+        <a href="login.html" class="btn btn-secondary">Sign In</a>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-badge">AI-Powered Training</div>
+            <h1 class="hero-title">Elevate Your Fitness With <span>Intelligent AI</span></h1>
+            <p class="hero-description">
+                Get a customized workout planner, nutrition guide, and personal AI coach tailored strictly to your metrics, goals, and available equipment.
+            </p>
+            <div class="hero-ctas">
+                <a href="register.html" class="btn btn-primary">Start Your Journey</a>
+                <a href="login.html" class="btn btn-secondary">Access Dashboard</a>
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="glass-card feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Personalized AI Chat</h3>
+                <p>Chat with a personal trainer who remembers your body metrics, goals, and history. Powered by Llama 3.</p>
+            </div>
+            <div class="glass-card feature-card">
+                <div class="feature-icon">🏋️‍♂️</div>
+                <h3>Workout Generator</h3>
+                <p>Generate highly structured workout regimens based on your current experience level and available equipment.</p>
+            </div>
+            <div class="glass-card feature-card">
+                <div class="feature-icon">🥗</div>
+                <h3>Diet Planner</h3>
+                <p>Get custom daily meal distributions, calorie requirements, and macronutrient targets matching your goal.</p>
+            </div>
+            <div class="glass-card feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>BMI & Progress</h3>
+                <p>Calculate and keep track of your metrics dynamically and monitor health statuses from the main panel.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer style="text-align: center; padding: 30px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+        <p>&copy; 2026 AI Fitness Companion. Created by Anoop Sankar.</p>
+    </footer>
+</body>
+</html>

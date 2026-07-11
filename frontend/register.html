@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - AI Fitness Companion</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Redirect immediately if already authenticated
+        window.redirectIfAuthenticated();
+    </script>
+</head>
+<body class="auth-page">
+    <div class="glass-card auth-card register-card">
+        <div class="auth-header">
+            <a href="index.html" class="logo">FIT COMPANION</a>
+            <h1>Create Your Profile</h1>
+            <p>Set up your personalized fitness parameters</p>
+        </div>
+
+        <!-- Multi-Step Progress Tracker -->
+        <div class="progress-bar-container">
+            <div class="progress-line">
+                <div class="progress-line-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-step active" data-step="1">1</div>
+            <div class="progress-step" data-step="2">2</div>
+            <div class="progress-step" data-step="3">3</div>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <form id="register-form">
+            <!-- Step 1: Account Information -->
+            <div class="step-content active" id="step-1-content">
+                <h3 style="margin-bottom: 15px; font-weight: 600;">Step 1: Account Details</h3>
+                
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe" required autocomplete="name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="name@example.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" placeholder="Min. 6 characters" required autocomplete="new-password">
+                        <button type="button" class="password-toggle-btn" id="password-toggle">Show</button>
+                    </div>
+                </div>
+
+                <div class="form-footer single-btn">
+                    <button type="button" class="btn btn-primary" id="btn-next-1">Next: Physical Metrics &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Physical Metrics -->
+            <div class="step-content" id="step-2-content">
+                <h3 style="margin-bottom: 15px; font-weight: 600;">Step 2: Body Metrics</h3>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="age">Age (years)</label>
+                        <input type="number" id="age" min="10" max="100" placeholder="25" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" required>
+                            <option value="" disabled selected>Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Non-Binary">Non-Binary</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="height">Height (cm)</label>
+                        <input type="number" step="0.1" id="height" min="80" max="250" placeholder="175" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="weight">Weight (kg)</label>
+                        <input type="number" step="0.1" id="weight" min="20" max="300" placeholder="70" required>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-prev-2">&larr; Back</button>
+                    <button type="button" class="btn btn-primary" id="btn-next-2">Next: Fitness Goals &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Fitness Goals & Settings -->
+            <div class="step-content" id="step-3-content">
+                <h3 style="margin-bottom: 15px; font-weight: 600;">Step 3: Fitness Profile</h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="goal">Fitness Goal</label>
+                        <select id="goal" required>
+                            <option value="" disabled selected>Select your goal</option>
+                            <option value="Build Muscle">Build Muscle</option>
+                            <option value="Lose Weight">Lose Weight</option>
+                            <option value="Improve Endurance">Improve Endurance</option>
+                            <option value="General Fitness">General Fitness</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="activity_level">Activity Level</label>
+                        <select id="activity_level" required>
+                            <option value="" disabled selected>Select activity</option>
+                            <option value="Sedentary">Sedentary (Little/no exercise)</option>
+                            <option value="Lightly Active">Lightly Active (1-3 days/week)</option>
+                            <option value="Moderately Active">Moderately Active (3-5 days/week)</option>
+                            <option value="Very Active">Very Active (6-7 days/week)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">Experience Level</label>
+                        <select id="experience" required>
+                            <option value="" disabled selected>Select level</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="equipment">Available Equipment</label>
+                        <select id="equipment" required>
+                            <option value="" disabled selected>Select equipment</option>
+                            <option value="Full Gym">Full Gym (Weights & Machines)</option>
+                            <option value="Home Gym">Home Gym (Dumbbells/Barbell)</option>
+                            <option value="Resistance Bands">Resistance Bands</option>
+                            <option value="Bodyweight Only">Bodyweight Only</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-prev-3">&larr; Back</button>
+                    <button type="submit" class="btn btn-cyan" id="btn-submit">Complete Setup</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="auth-switch">
+            Already have an account? <a href="login.html">Sign In</a>
+        </div>
+    </div>
+
+    <!-- Page-specific script -->
+    <script src="js/register.js"></script>
+</body>
+</html>

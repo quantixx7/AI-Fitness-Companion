@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Diet Planner - AI Fitness Companion</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        /* Special styles for plan outputs - matching workout page style */
+        .plan-header-card {
+            padding: 30px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .plan-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+        }
+
+        .plan-badges {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .plan-badge {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .plan-badge.highlight-green {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--accent-green);
+        }
+
+        .plan-badge.highlight-cyan {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.3);
+            color: var(--accent-cyan);
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 800px) {
+            .plan-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .plan-card {
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .plan-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .macro-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .macro-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .macro-card {
+            padding: 15px;
+            text-align: center;
+            background: rgba(17, 24, 39, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            border-bottom: 3px solid var(--border-color);
+        }
+
+        .macro-card.cal-card { border-bottom-color: var(--accent-cyan); }
+        .macro-card.pro-card { border-bottom-color: #f59e0b; } /* orange */
+        .macro-card.carb-card { border-bottom-color: #3b82f6; } /* blue */
+        .macro-card.fat-card { border-bottom-color: #ef4444; } /* red */
+
+        .macro-title {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        .macro-val {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .meal-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .meal-card {
+            padding: 16px;
+            background: rgba(17, 24, 39, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-left: 3px solid var(--accent-cyan);
+            transition: var(--transition-smooth);
+        }
+
+        .meal-card:hover {
+            transform: translateX(4px);
+            border-color: var(--border-hover);
+        }
+
+        .meal-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .meal-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
+        .raw-reply-box {
+            background: #111827;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+    </style>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        window.requireAuth();
+    </script>
+</head>
+<body>
+    <header class="landing-header">
+        <a href="dashboard.html" class="logo">FIT COMPANION</a>
+        <div class="header-actions">
+            <a href="dashboard.html" class="btn btn-secondary" style="font-size:0.85rem; padding: 8px 16px;">&larr; Dashboard</a>
+            <button id="logout-btn" class="btn btn-secondary" style="font-size:0.85rem; padding: 8px 16px;">Sign Out</button>
+        </div>
+    </header>
+
+    <main class="dashboard-container" style="max-width: 1000px;">
+        <div class="dashboard-header">
+            <div class="user-welcome">
+                <h1>AI Diet <span>Planner</span></h1>
+                <p>Provide dietary goals, preferences, or allergies, and Llama 3 will compose a nutrition structure.</p>
+            </div>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <!-- Form Panel -->
+        <div class="glass-card" style="padding: 30px; margin-bottom: 40px;">
+            <form id="diet-form">
+                <div class="form-group">
+                    <label for="diet-message">Nutritional Preferences & Requirements</label>
+                    <textarea 
+                        id="diet-message" 
+                        placeholder="E.g., 2000 calories maximum, high protein, vegetarian. Or, low-carb keto-friendly meal options." 
+                        rows="3" 
+                        required
+                    ></textarea>
+                </div>
+                <button type="submit" class="btn btn-cyan" id="generate-btn">
+                    <span>Generate Diet Structure</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Loading View -->
+        <div id="plan-loading" class="glass-card" style="display: none; padding: 50px; text-align: center; margin-bottom: 40px;">
+            <div class="loading-spinner" style="width: 40px; height: 40px; border-width: 4px; border-top-color: var(--accent-cyan); margin: 0 auto 20px auto; color: var(--accent-green);"></div>
+            <h3>Generating Diet Plan...</h3>
+            <p style="color: var(--text-secondary); margin-top: 8px;" class="animate-pulse">Compiling macronutrients, meal schedules, and snacks matching your profile...</p>
+        </div>
+
+        <!-- Result View -->
+        <div id="plan-result" style="display: none; margin-bottom: 40px;">
+            <!-- Content will be injected dynamically -->
+        </div>
+
+    </main>
+
+    <footer style="text-align: center; padding: 30px; margin-top: 60px; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.9rem;">
+        <p>&copy; 2026 AI Fitness Companion. Created by Anoop Sankar.</p>
+    </footer>
+
+    <script src="js/diet.js"></script>
+</body>
+</html>

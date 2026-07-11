@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fitness Chat - AI Fitness Companion</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Restrict access to authenticated users
+        window.requireAuth();
+    </script>
+</head>
+<body>
+    <div class="chat-layout">
+        <!-- Sidebar overlay for mobile view drawer -->
+        <div class="sidebar-overlay" id="mobile-overlay"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="chat-sidebar" id="sidebar-panel">
+            <div class="sidebar-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <a href="dashboard.html" class="logo" style="font-size: 1.2rem;">FIT COMPANION</a>
+                    <button class="session-action-btn mobile-menu-btn" id="sidebar-close-btn" style="display: none;">&times;</button>
+                </div>
+                <button class="btn btn-primary" style="font-size: 0.85rem; padding: 10px;" id="new-chat-btn">
+                    + New Chat
+                </button>
+            </div>
+
+            <!-- Scrollable Chat History Sessions -->
+            <nav class="sessions-nav-list" id="sidebar-sessions-list">
+                <!-- Injected dynamically by chat.js -->
+                <div class="animate-pulse" style="text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 20px;">
+                    Loading chat list...
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="dashboard.html" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px;">
+                    &larr; Back to Dashboard
+                </a>
+                <button class="btn btn-danger" style="font-size: 0.8rem; padding: 8px;" id="sidebar-logout-btn">
+                    Sign Out
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Panel -->
+        <main class="chat-main">
+            <!-- Chat Header -->
+            <header class="chat-main-header">
+                <div class="chat-header-title">
+                    <button class="mobile-menu-btn" id="hamburger-menu-btn">&#9776;</button>
+                    <h2 id="active-chat-title">AI Coach Chat</h2>
+                </div>
+                <div class="header-actions" id="chat-header-controls" style="display: none;">
+                    <button class="btn btn-secondary" style="font-size: 0.8rem; padding: 6px 12px;" id="rename-session-header-btn">Rename</button>
+                    <button class="btn btn-danger" style="font-size: 0.8rem; padding: 6px 12px;" id="delete-session-header-btn">Delete</button>
+                </div>
+            </header>
+
+            <!-- Chat Content Area -->
+            <div class="chat-messages-container" id="chat-scroller">
+                <!-- Welcome View -->
+                <div class="chat-welcome-container" id="chat-welcome-placeholder">
+                    <h2>Meet Your AI Fitness Coach</h2>
+                    <p>
+                        Get personalized training plans, nutritional answers, and custom workouts. 
+                        Your coach is powered by Llama 3 and leverages your physical profile details to tailor all tips.
+                    </p>
+                    <div style="margin-top: 30px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                        <span class="glass-card" style="padding: 10px 16px; font-size: 0.85rem; color: var(--text-secondary);">"I want bigger arms"</span>
+                        <span class="glass-card" style="padding: 10px 16px; font-size: 0.85rem; color: var(--text-secondary);">"Vegan dinner ideas"</span>
+                        <span class="glass-card" style="padding: 10px 16px; font-size: 0.85rem; color: var(--text-secondary);">"Recommend chest routine"</span>
+                    </div>
+                </div>
+                
+                <!-- Messages Stream (dynamically injected) -->
+                <div id="messages-stream" style="width: 100%; display: flex; flex-direction: column; gap: 20px;"></div>
+            </div>
+
+            <!-- Input Bar -->
+            <div class="chat-input-area">
+                <form id="chat-input-form" class="chat-input-box-wrapper">
+                    <textarea 
+                        class="chat-textarea" 
+                        id="chat-user-message-input" 
+                        placeholder="Send a message to your AI Coach..." 
+                        rows="1"
+                        required
+                    ></textarea>
+                    <button type="submit" class="chat-send-btn" id="chat-send-btn" disabled>
+                        <span>&rarr;</span>
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals for Rename -->
+    <dialog id="rename-dialog" class="glass-card" style="padding: 24px; max-width: 400px; width: 90%; margin: auto; border: 1px solid var(--border-color); border-radius: var(--radius-lg); background: #111827; color: var(--text-primary);">
+        <form method="dialog" id="rename-dialog-form">
+            <h3 style="margin-bottom: 12px; font-size: 1.1rem; font-weight:600;">Rename Chat Session</h3>
+            <div class="form-group">
+                <label for="new-session-title-input">New Title</label>
+                <input type="text" id="new-session-title-input" required>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn btn-secondary" id="rename-cancel-btn" style="font-size:0.85rem; padding: 8px 16px;">Cancel</button>
+                <button type="submit" class="btn btn-cyan" style="font-size:0.85rem; padding: 8px 16px;">Save</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="js/chat.js"></script>
+</body>
+</html>
