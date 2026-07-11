@@ -31,7 +31,7 @@ window.apiCall = async function(endpoint, options = {}) {
         const response = await fetch(url, options);
 
         // If unauthorized (401), clean up the invalid session and redirect to login
-        if (response.status === 401) {
+        if (response.status === 401 && !endpoint.includes('/login')) {
             localStorage.removeItem('token');
             localStorage.removeItem('user_email');
             localStorage.removeItem('user_id');
